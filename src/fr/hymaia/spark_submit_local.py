@@ -1,19 +1,24 @@
 from pyspark.sql import SparkSession
-from src.fr.hymaia.exo2.spark_clean_job import clean_job
+from src.fr.hymaia.exo2.spark_clean_job import run
 
 # TODO : import custom spark code dependencies
+
+CITY_KEY = "city_key"
+CLIENT_KEY = "client_key"
 
 def main():
     spark = SparkSession.builder.getOrCreate()
 
-    df_city = spark.read \
+    city_df = spark.read \
         .option(key="header", value="true") \
         .csv("src/resources/exo2/city_zipcode.csv")
-    df_client = spark.read \
+    client_df = spark.read \
         .option(key="header", value="true") \
         .csv("src/resources/exo2/clients_bdd.csv")
 
-    df = clean_job(df_client, df_city)
+    inputs = {CLIENT_KEY: client_df, CITY_KEY: city_df}
+
+    df = run(inputs)
     df.show()
 
 if __name__ == '__main__':

@@ -1,13 +1,15 @@
 import unittest
 from tests.fr.hymaia.spark_test_case import spark
-from src.fr.hymaia.exo2.aggregate.aggregate import client_by_dept
+from src.fr.hymaia.exo2.spark_aggregate_job import run
 from pyspark.sql.types import StructType, StructField, StringType, LongType
+
+AGG_KEY = "adults_city"
 
 class AggregateTest(unittest.TestCase):
 
     def testDifferentSchemaCheck(self):
         # given
-        df = spark.createDataFrame(
+        adults_city_df = spark.createDataFrame(
             [
                 ('Franck', 45, '68150', 'SAINT CITY', '68'),
                 ('Carl', 43, '32110', 'VILLERS GRELOT', '32'),
@@ -28,8 +30,10 @@ class AggregateTest(unittest.TestCase):
             ['department', 'nb_people']
         )
 
+        inputs = {AGG_KEY: adults_city_df}
+
         # when
-        aggregated_df = client_by_dept(df)
+        aggregated_df = run(inputs)
 
         # then
         with self.assertRaises(AssertionError) as context:
@@ -45,7 +49,7 @@ class AggregateTest(unittest.TestCase):
             StructField('city', StringType(), True),
             StructField('department', StringType(), True),
         ])
-        df = spark.createDataFrame(
+        adults_city_df = spark.createDataFrame(
             [
                 ('Franck', 45, '68150', 'SOLAURE EN DIOIS', '68'),
                 ('Carl', 43, '32110', 'VILLERS GRELOT', '32'),
@@ -70,9 +74,11 @@ class AggregateTest(unittest.TestCase):
             ],
             schema=expected_schema
         )
+        
+        inputs = {AGG_KEY: adults_city_df}
 
         # when
-        aggregated_df = client_by_dept(df)
+        aggregated_df = run(inputs)
 
         # then
         self.assertEqual(expected_df.schema, aggregated_df.schema)

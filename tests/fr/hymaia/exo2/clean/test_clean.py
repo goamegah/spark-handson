@@ -1,6 +1,9 @@
 from tests.fr.hymaia.spark_test_case import spark
-from src.fr.hymaia.exo2.spark_clean_job import clean_job
+from src.fr.hymaia.exo2.spark_clean_job import run
 import unittest
+
+CITY_KEY = "city_key"
+CLIENT_KEY = "client_key"
 
 class CleanTest(unittest.TestCase):
     def testCleanJob(self):
@@ -40,8 +43,10 @@ class CleanTest(unittest.TestCase):
         # Create DataFrame
         expected = spark.createDataFrame(data, columns)
 
+        inputs = {CLIENT_KEY: client_df, CITY_KEY: city_df}
+        
         # when
-        actual = clean_job(client_df, city_df)
+        actual = run(inputs)
 
         # then
         self.assertCountEqual(actual.collect(), expected.collect())

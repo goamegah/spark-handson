@@ -1,20 +1,35 @@
-from .aggregate.aggregate import client_by_dept
-from src.fr.hymaia.utils.utils import move_output, remove_dirs
+from pyspark.sql import DataFrame
+from src.fr.hymaia.exo2.aggregate.aggregate import client_by_dept
+from src.fr.hymaia.utils.utils import move_csv_files, remove_files, make_dirs
 from src.fr.hymaia.spark_utils import spark
+from typing import Dict
 
-def aggregate(df):
-    df_client_by_dept = client_by_dept(df)
-    return df_client_by_dept
+CLEAN_OUTPUT_DIR = "data/exo2/clean/"
+AGG_OUTPUT_DIR = "data/exo2/agg/"
+TMP_DIR = 'data/exo2/tmp/'
+AGG_KEY = "adults_city"
 
 def main():
+    input = start()
+    output = run(input)
+    end(output)
 
-    df = spark.read.parquet('data/exo2/output')
+def start() -> Dict[str, DataFrame]: 
+    adults_city_df = spark.read.parquet(CLEAN_OUTPUT_DIR)
+    inputs = {AGG_KEY: adults_city_df}
+    return inputs
 
-    df_client_by_dept = aggregate(df)
+def run(inputs: Dict[str, DataFrame]) -> DataFrame:
+    input = inputs[AGG_KEY]
+    client_by_dept_df = client_by_dept(input)
+    return client_by_dept_df
 
-    df_client_by_dept.write.mode('overwrite').csv('data/exo2/aggregate', header=True)
-    move_output('data/exo2/aggregate', 'data/exo2/')
-    remove_dirs('data/exo2/aggregate')
+def end(output) -> None:
+    make_dirs(AGG_OUTPUT_DIR)
+    output.write.mode('overwrite').csv(TMP_DIR, header=True)
+    move_csv_files(TMP_DIR, AGG_OUTPUT_DIR)
+    remove_files(TMP_DIR)
+    remove_files(CLEAN_OUTPUT_DIR)
 
-    # TODO: Rendre le reste du code propre
-    # clean_output('data/exo2/output')
+if __name__ == '__main__':
+    main()

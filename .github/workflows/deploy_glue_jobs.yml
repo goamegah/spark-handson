@@ -90,10 +90,13 @@ jobs:
       - name: Package code
         run: poetry build
 
+      - name: Setup AWS CLI
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set region eu-west-1  # Assurez-vous que la région correspond
+          
       - name: Upload packaged code to S3
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           aws s3 cp dist/spark_handson-0.1.0-py3-none-any.whl s3://goamegah-spark-handson-bucket/wheel/spark_handson-0.1.0-py3-none-any.whl
       

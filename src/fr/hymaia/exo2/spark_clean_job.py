@@ -1,4 +1,4 @@
-from src.fr.hymaia.spark_utils import spark
+from src.fr.hymaia.utils.spark_utils import spark
 from src.fr.hymaia.exo2.clean.clean import keep_adults, join_adult_and_city, add_dept
 from pyspark.sql import DataFrame
 from typing import Dict

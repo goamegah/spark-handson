@@ -1,5 +1,5 @@
 import pyspark.sql.functions as f
-from src.fr.hymaia.spark_utils import spark
+from src.fr.hymaia.utils.spark_utils import spark
 
 def main():
     df = (spark.read.option("header", True).csv("src/resources/exo1/data.csv"))

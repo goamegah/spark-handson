@@ -1,5 +1,5 @@
 
-from src.fr.hymaia.spark_utils import spark
+from src.fr.hymaia.utils.spark_utils import spark
 import pyspark.sql.functions as f
 import time
 

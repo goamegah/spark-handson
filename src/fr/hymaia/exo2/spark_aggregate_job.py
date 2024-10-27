@@ -1,7 +1,7 @@
 from pyspark.sql import DataFrame
 from src.fr.hymaia.exo2.aggregate.aggregate import client_by_dept
 from src.fr.hymaia.utils.utils import move_csv_files, remove_files, make_dirs
-from src.fr.hymaia.spark_utils import spark
+from src.fr.hymaia.utils.spark_utils import spark
 from typing import Dict
 
 CLEAN_OUTPUT_DIR = "data/exo2/clean/"

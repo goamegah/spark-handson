@@ -14,7 +14,7 @@ provider "aws" {
 
 # Create an S3 bucket to store the Terraform state file
 resource "aws_s3_bucket" "spark_handson_tf_state_bucket_ref" {
-  bucket        = "spark_handson-tf-state-bucket" # REPLACE WITH YOUR BUCKET NAME
+  bucket        = "spark-handson-tf-state-bucket" # REPLACE WITH YOUR BUCKET NAME
   force_destroy = true
 }
 

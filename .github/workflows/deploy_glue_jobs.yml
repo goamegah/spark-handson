@@ -1,9 +1,13 @@
 name: Deploy AWS Glue Jobs
 
 on:
+  push:
+    branches:
+      - master
   pull_request:
     branches:
       - master
+  workflow_dispatch:  # Enable manual triggering of the workflow
 
 jobs:
   # Build and Test Stage

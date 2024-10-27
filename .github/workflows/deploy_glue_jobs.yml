@@ -104,9 +104,9 @@ jobs:
         run:
           aws s3 cp dist/spark_handson-0.1.0-py3-none-any.whl s3://goamegah-spark-handson-bucket/wheel/spark_handson-0.1.0-py3-none-any.whl
       
-      - name: Upload Glue Job script to S3
-        run:
-          aws s3 cp src/fr/hymaia/exo2_glue_job.py s3://goamegah-spark-handson-bucket/spark-jobs/
+      - name: Upload Glue Job Script
+        run: |
+          aws s3 cp ./src/fr/hymaia/exo2_glue_job.py s3://goamegah-spark-handson-bucket/spark-jobs/
 
 
   # Destroy Stage for main resources

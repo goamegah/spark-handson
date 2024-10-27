@@ -2,7 +2,7 @@ terraform {
   // backend configuration for storing the state file
     backend "s3" {
         bucket = "spark-handson-tf-state-bucket "
-        key    = "tf-infra/terraform.tfstate"
+        key    = "terraform/state"
         region = "us-east-1"
         dynamodb_table = "spark-handson-db-tf-state-lock"
         encrypt = true

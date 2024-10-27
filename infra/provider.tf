@@ -3,7 +3,7 @@ terraform {
     backend "s3" {
         bucket = "spark-handson-tf-state-bucket"
         key    = "terraform/state"
-        region = "us-west-1"
+        region = "eu-west-1"
         dynamodb_table = "spark-handson-db-tf-state-lock"
         encrypt = true
     }

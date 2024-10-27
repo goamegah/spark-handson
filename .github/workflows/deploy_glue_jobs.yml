@@ -89,25 +89,17 @@ jobs:
 
       - name: Package code
         run: poetry build
-      
-      - name: Install AWS CLI
-        run: |
-          pip install awscli
-  
-      - name: Setup AWS CLI
-        run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set region eu-west-1
 
       - name: Upload packaged code to S3
-        run:
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
           aws s3 cp dist/spark_handson-0.1.0-py3-none-any.whl s3://goamegah-spark-handson-bucket/wheel/spark_handson-0.1.0-py3-none-any.whl
       
       - name: Upload Glue Job Script
         run: |
           aws s3 cp ./src/fr/hymaia/spark_glue_job.py s3://goamegah-spark-handson-bucket/spark-jobs/
-
 
   # Destroy Stage for main resources
   destroy_infra:
@@ -122,6 +114,13 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
 
+      - name: Empty S3 Bucket
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws s3 rm s3://goamegah-spark-handson-bucket --recursive
+      
       - name: Remove lock file (if exists)
         working-directory: ./infra
         run: |

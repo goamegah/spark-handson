@@ -4,7 +4,7 @@ terraform {
         bucket = "spark-handson-tf-state-bucket "
         key    = "tf-infra/terraform.tfstate"
         region = "us-east-1"
-        dynamodb_table = "spark_handson_db_tf_state_lock"
+        dynamodb_table = "spark-handson-db-tf-state-lock"
         encrypt = true
     }
   required_providers {

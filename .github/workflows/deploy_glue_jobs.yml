@@ -1,12 +1,9 @@
 name: Deploy AWS Glue Jobs
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   # Build and Test Stage

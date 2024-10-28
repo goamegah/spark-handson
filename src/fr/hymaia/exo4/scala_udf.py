@@ -1,6 +1,7 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.column import Column, _to_java_column, _to_seq
-import time
+from typing import Dict
+from pyspark.sql import DataFrame
 
 # must be defined in the same file
 # why ?
@@ -10,11 +11,38 @@ import time
 # so we need to define the udf in the same file
 # and access it via the SparkContext
 
+
+SUDF_KEY = "sudf_key"
+SUDF_INPUT_PATH = 'src/resources/exo4/sell.csv'
+SUDF_OUTPUT_DIR = 'data/exo4/sudf/'
+
+
 spark = SparkSession.builder \
     .appName("Jar") \
     .master("local[*]") \
     .config('spark.jars', 'src/resources/exo4/udf.jar') \
     .getOrCreate()
+
+def main():
+    inputs = start()
+    output = add_category_name_using_scala_udf(inputs[SUDF_KEY])
+    # output = run(inputs)  # == add_category_name_using_scala_udf
+    # end(output)
+
+def start() -> Dict[str, DataFrame]:
+    df = spark.read \
+        .option(key="delimiter", value=",") \
+        .option(key="header", value=True) \
+        .csv(SUDF_INPUT_PATH)
+    return {SUDF_KEY: df}
+
+def run(inputs: Dict[str, DataFrame]) -> DataFrame:
+    df = inputs[SUDF_KEY]
+    df = add_category_name_using_scala_udf(df)
+    return df
+
+def end(output: DataFrame):
+    output.write.mode('overwrite').parquet(SUDF_OUTPUT_DIR)
 
 def get_add_category_name_scala_udf(col):
     # on récupère le SparkContext
@@ -25,18 +53,9 @@ def get_add_category_name_scala_udf(col):
     return Column(add_category_name_udf.apply(_to_seq(sc, cols=[col], converter=_to_java_column)))
 
 def add_category_name_using_scala_udf(df):
-    return df.withColumn('category_name', get_add_category_name_scala_udf(df.category))
+    return df.withColumn('category_name', get_add_category_name_scala_udf(df.category))   
 
-def main():
-    df = spark.read \
-        .option(key="delimiter", value=",") \
-        .option(key="header", value=True) \
-        .csv('src/resources/exo4/sell.csv')
-
-    start_time = time.time()
-    _ = add_category_name_using_scala_udf(df)
-    end_time = time.time()
-    runtime = end_time - start_time
-    print("Runtime scala_udf:", runtime, "secs")
+if __name__ == '__main__':
+    main()
 
 

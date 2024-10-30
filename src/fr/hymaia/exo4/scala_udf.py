@@ -1,4 +1,5 @@
-from pyspark.sql import SparkSession
+# from pyspark.sql import SparkSession
+from src.fr.hymaia.spark_utils import spark
 from pyspark.sql.column import Column, _to_java_column, _to_seq
 from typing import Dict
 from pyspark.sql import DataFrame
@@ -16,12 +17,6 @@ SUDF_KEY = "sudf_key"
 SUDF_INPUT_PATH = 'src/resources/exo4/sell.csv'
 SUDF_OUTPUT_DIR = 'data/exo4/sudf/'
 
-
-spark = SparkSession.builder \
-    .appName("Jar") \
-    .master("local[*]") \
-    .config('spark.jars', 'src/resources/exo4/udf.jar') \
-    .getOrCreate()
 
 def main():
     inputs = start()

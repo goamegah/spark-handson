@@ -1,4 +1,3 @@
-# from pyspark.sql import SparkSession
 from src.fr.hymaia.spark_utils import spark
 from pyspark.sql.column import Column, _to_java_column, _to_seq
 from typing import Dict
@@ -22,7 +21,7 @@ def main():
     inputs = start()
     output = add_category_name_using_scala_udf(inputs[SUDF_KEY])
     # output = run(inputs)  # == add_category_name_using_scala_udf
-    # end(output)
+    end(output)
 
 def start() -> Dict[str, DataFrame]:
     df = spark.read \

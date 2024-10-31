@@ -11,6 +11,7 @@ AGG_OUTPUT_DIR = "data/exo2/agg/"
 TMP_DIR = 'data/exo2/tmp/'
 AGG_KEY = "adults_city"
 
+
 def main():
     input = start()
     output = run(input)
@@ -32,6 +33,7 @@ def end(output) -> None:
     move_csv_files(TMP_DIR, AGG_OUTPUT_DIR)
     remove_files(TMP_DIR)
     remove_files(CLEAN_OUTPUT_DIR)
+
 
 if __name__ == '__main__':
     main()

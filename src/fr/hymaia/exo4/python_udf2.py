@@ -12,7 +12,7 @@ def main():
     inputs = start()
     output = add_category_name(inputs[UDF2_KEY])
     # output = run(inputs)  # -> add_category_name
-    # end(output)
+    end(output)
 
 def start() -> Dict[str, DataFrame]:
     df = spark.read \

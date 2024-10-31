@@ -113,8 +113,9 @@ class JoinAdultAndCityTest(unittest.TestCase):
         # then
         self.assertCountEqual(actual.collect(), expected.collect())
 
-class CleanRunTest(unittest.TestCase):
-    def testCleanJob(self):
+class CleanJobIntegrationTest(unittest.TestCase):
+
+    def testCleanJobIntegration(self):
         # given
         client_df = spark.createDataFrame(
             [

@@ -19,10 +19,10 @@ def print_system_info():
     print("=== System Information ===")
     print(f"CPU Count (Logical): {psutil.cpu_count(logical=True)}")
     print(f"CPU Count (Physical): {psutil.cpu_count(logical=False)}")
-    print(f"CPU Frequency: {psutil.cpu_freq().current} MHz")
-    print(f"Total RAM: {psutil.virtual_memory().total / (1024 ** 3):.2f} GB")
-    print(f"Available RAM: {psutil.virtual_memory().available / (1024 ** 3):.2f} GB")
-    print(f"Used RAM: {psutil.virtual_memory().used / (1024 ** 3):.2f} GB")
+    print(f"CPU Frequency: {round(psutil.cpu_freq().current, 3)} MHz")
+    print(f"Total RAM: {round(psutil.virtual_memory().total / (1024 ** 3), 3)} GB")
+    print(f"Available RAM: {round(psutil.virtual_memory().available / (1024 ** 3), 3)} GB")
+    print(f"Used RAM: {round(psutil.virtual_memory().used / (1024 ** 3), 3)} GB")
     print(f"Memory Usage: {psutil.virtual_memory().percent}%")
     print("==========================")
 
@@ -44,13 +44,13 @@ def benchmark_job(job_module_name, job_args, runs):
         job_main_function(**job_args)
         end_time = time.time()
         execution_time = end_time - start_time
-        # print(f"Run {i + 1} for {job_module_name} executed in {execution_time:.2f} seconds")
+        # print(f"Run {i + 1} for {job_module_name} executed in {round(execution_time, 3)} seconds")
         
         if i > 0:  # Ignore the first run for averaging
             total_time += execution_time
 
     average_time = total_time / (runs - 1)
-    return average_time
+    return round(average_time, 3)
 
 def main():
     args_dict = parse_args(sys.argv[1:])
@@ -64,11 +64,23 @@ def main():
         average_time = benchmark_job(job, args_dict, runs)
         architecture = get_system_architecture()
         physical_cores = psutil.cpu_count(logical=False)
-        total_ram_gb = psutil.virtual_memory().total / (1024 ** 3)  # Convert MB to GB
-        results.append([job, average_time, runs, architecture, physical_cores, total_ram_gb])
+        total_ram_gb = round(psutil.virtual_memory().total / (1024 ** 3), 3)  # Convert MB to GB
+        available_ram_gb = round(psutil.virtual_memory().available / (1024 ** 3), 3)
+        used_ram_gb = round(psutil.virtual_memory().used / (1024 ** 3), 3)
+        memory_usage_percent = psutil.virtual_memory().percent
+
+        results.append([
+            job, average_time, runs, architecture, 
+            physical_cores, total_ram_gb, available_ram_gb, 
+            used_ram_gb, memory_usage_percent
+        ])
 
     # Print results in a tabulated format
-    headers = ["Job", "Average Execution Time (s)", "Number of Runs", "Architecture", "Physical Cores", "Total RAM (GB)"]
+    headers = [
+        "Job", "Avg Exec Time (s)", "Runs", 
+        "Arch", "Physical Cores", "T. RAM (GB)", 
+        "A. RAM (GB)", "U. RAM (GB)", "Memory Usage (%)"
+    ]
     print(tabulate(results, headers=headers, tablefmt="pretty"))
 
 if __name__ == '__main__':

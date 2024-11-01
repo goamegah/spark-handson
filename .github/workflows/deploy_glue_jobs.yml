@@ -119,11 +119,11 @@ jobs:
 
       - name: Upload packaged code to S3
         run: |
-          aws s3 cp dist/spark_handson-0.1.0-py3-none-any.whl s3://your-bucket-name/wheel/spark_handson-0.1.0-py3-none-any.whl
+          aws s3 cp dist/spark_handson-0.1.0-py3-none-any.whl s3://goamegah-spark-handson-bucket/wheel/spark_handson-0.1.0-py3-none-any.whl
 
       - name: Upload Glue Job Script
         run: |
-          aws s3 cp ./src/fr/hymaia/spark_glue_job.py s3://your-bucket-name/spark-jobs/
+          aws s3 cp ./src/fr/hymaia/spark_glue_job.py s3://goamegah-spark-handson-bucket/spark-jobs/
 
   # Cleanup Stage
   destroy_infra:

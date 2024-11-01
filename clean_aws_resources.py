@@ -94,7 +94,7 @@ def delete_table(table_name):
 def main():
     s3_bucket_names = [
         'spark-handson-tf-state-bucket',
-        'goamegah-spark-handson-bucket'
+        # 'goamegah-spark-handson-bucket'
     ]  # Replace with your S3 bucket names
     table_name = 'spark-handson-db-tf-state-lock'
     

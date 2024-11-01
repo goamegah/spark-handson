@@ -1,7 +1,33 @@
-
 from src.fr.hymaia.spark_utils import spark
 import pyspark.sql.functions as f
-import time
+from typing import Dict
+from pyspark.sql import DataFrame
+
+UDF2_KEY = 'udf2_key'
+UDF2_INPUT_PATH = 'src/resources/exo4/sell.csv'
+UDF2_OUTPUT_DIR = 'data/exo4/udf2/'
+
+
+def main():
+    inputs = start()
+    output = add_category_name(inputs[UDF2_KEY])
+    # output = run(inputs)  # -> add_category_name
+    end(output)
+
+def start() -> Dict[str, DataFrame]:
+    df = spark.read \
+        .option(key="delimiter", value=",") \
+        .option(key="header", value=True) \
+        .csv(UDF2_INPUT_PATH)
+    return {UDF2_KEY: df}
+
+def end(output: DataFrame):
+    output.write.mode('overwrite').parquet(UDF2_OUTPUT_DIR)
+
+def run(inputs: Dict[str, DataFrame]) -> DataFrame:
+    df = inputs[UDF2_KEY]
+    df = add_category_name(df)
+    return df
 
 @f.udf('string')
 def extract_category_name_udf(category_id):
@@ -10,15 +36,6 @@ def extract_category_name_udf(category_id):
 def add_category_name(df):
     return df.withColumn('category_name', extract_category_name_udf(df.category))
 
-def main():
-    df = spark.read \
-        .option(key="delimiter", value=",") \
-        .option(key="header", value=True) \
-        .csv('src/resources/exo4/sell.csv')
-
-    start_time = time.time()
-    _ = add_category_name(df)
-    end_time = time.time()
-    runtime = end_time - start_time
-    print("Runtime python_udf:", runtime, "secs")
+if __name__ == '__main__':
+    main()
 

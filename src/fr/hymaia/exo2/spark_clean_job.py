@@ -11,6 +11,7 @@ CLEAN_OUTPUT_DIR = "data/exo2/clean/"
 CITY_KEY = "city_key"
 CLIENT_KEY = "client_key"
 
+
 def main():
     inputs = start()
     output = run(inputs)
@@ -39,6 +40,7 @@ def run(inputs: Dict[str, DataFrame]) -> DataFrame:
 
 def end(output: DataFrame):
     output.write.mode('overwrite').parquet(CLEAN_OUTPUT_DIR)
+
 
 if __name__ == '__main__':
     main()

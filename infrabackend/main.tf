@@ -40,7 +40,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "spark_handson_ss_
 
 # Create a DynamoDB table to store the Terraform state lock file
 resource "aws_dynamodb_table" "spark_handson_db_tf_state_lock_ref" {
-  name         = "spark_handson_db_tf_state_lock"
+  name         = "spark-handson-db-tf-state-lock"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "LockID"
   attribute {

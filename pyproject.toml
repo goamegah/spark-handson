@@ -9,6 +9,9 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "~3.10"
+psutil = "^6.1.0"
+tabulate = "^0.9.0"
+boto3 = "^1.35.53"
 
 
 [tool.poetry.dev-dependencies]
@@ -25,3 +28,4 @@ scala_udf = "src.fr.hymaia.exo4.scala_udf:main"
 no_udf = "src.fr.hymaia.exo4.no_udf:main"
 python_udf2 = "src.fr.hymaia.exo4.python_udf2:main"
 spark_submit_local = "src.fr.hymaia.spark_submit_local:main"
+spark_benchmark_job = "src.fr.hymaia.main:main"

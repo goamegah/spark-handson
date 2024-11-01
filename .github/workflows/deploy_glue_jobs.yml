@@ -135,7 +135,7 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
-        
+
       - name: Setup AWS CLI
 
         run: |
@@ -170,7 +170,10 @@ jobs:
       - name: Install dependencies
         run: |
           pip install boto3  # Install dependencies for the cleanup script
-
+      
       - name: Run clean_aws_resources.py script
-        run: |
-          python3 clean_aws_resources.py
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: python3 clean_aws_resources.py
+          

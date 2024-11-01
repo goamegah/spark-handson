@@ -135,7 +135,13 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
-      
+        
+      - name: Setup AWS CLI
+
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set region eu-west-1
       - name: Empty S3 Bucket
         run:
           aws s3 rm s3://goamegah-spark-handson-bucket --recursive

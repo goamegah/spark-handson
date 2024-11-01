@@ -92,7 +92,10 @@ def delete_table(table_name):
         print(f"Error deleting table {table_name}: {e}")
 
 def main():
-    s3_bucket_names = ['spark-handson-tf-state-bucket']  # Replace with your S3 bucket names
+    s3_bucket_names = [
+        'spark-handson-tf-state-bucket',
+        # 'goamegah-spark-handson-bucket'
+    ]  # Replace with your S3 bucket names
     table_name = 'spark-handson-db-tf-state-lock'
     
     # Uncomment the following line if you want to delete EC2 instances

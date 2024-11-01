@@ -4,12 +4,33 @@ on:
   pull_request:
     branches:
       - master
-  workflow_dispatch:  # Activer le déclenchement manuel du workflow
+  workflow_dispatch:
 
 jobs:
+  # Testing
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt  # Adjust as necessary for your project
+
+      - name: Run tests
+        run: |
+          pytest  # Adjust to your test command
+
   # Initialisation du Backend (S3 pour l'état Terraform)
   infra_backend:
     runs-on: ubuntu-latest
+    needs: test
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -18,7 +39,7 @@ jobs:
         uses: hashicorp/setup-terraform@v1
 
       - name: Terraform Init (Backend Init)
-        working-directory: ./infrabackend  # Répertoire pour l'initialisation du backend
+        working-directory: ./infrabackend
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -34,7 +55,7 @@ jobs:
   # Déploiement de l'infrastructure principale
   infra:
     runs-on: ubuntu-latest
-    needs: infra_backend  # Dépend de l'initialisation du backend
+    needs: infra_backend
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -43,7 +64,7 @@ jobs:
         uses: hashicorp/setup-terraform@v1
 
       - name: Terraform Init (Infra)
-        working-directory: ./infra  # Répertoire pour l'infrastructure principale
+        working-directory: ./infra
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -62,8 +83,9 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: terraform apply -auto-approve
-  
-  build_and_deploy:
+
+  # Build Stage
+  build:
     runs-on: ubuntu-latest
     needs: infra
     steps:
@@ -80,13 +102,15 @@ jobs:
 
       - name: Install dependencies
         run: poetry install --no-root
-      
-      - name: Run tests
-        run: poetry run pytest
 
       - name: Package code
         run: poetry build
 
+  # Deploy Stage
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
       - name: Setup AWS CLI
         run: |
           echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
@@ -95,48 +119,22 @@ jobs:
 
       - name: Upload packaged code to S3
         run: |
-          aws s3 cp dist/spark_handson-0.1.0-py3-none-any.whl s3://goamegah-spark-handson-bucket/wheel/spark_handson-0.1.0-py3-none-any.whl
-      
+          aws s3 cp dist/spark_handson-0.1.0-py3-none-any.whl s3://your-bucket-name/wheel/spark_handson-0.1.0-py3-none-any.whl
+
       - name: Upload Glue Job Script
         run: |
-          aws s3 cp ./src/fr/hymaia/spark_glue_job.py s3://goamegah-spark-handson-bucket/spark-jobs/
+          aws s3 cp ./src/fr/hymaia/spark_glue_job.py s3://your-bucket-name/spark-jobs/
 
-  # Destroy Stage for main resources
+  # Cleanup Stage
   destroy_infra:
     runs-on: ubuntu-latest
-    needs: build_and_deploy
-    
-
+    needs: deploy
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
-
-      - name: Setup AWS CLI
-        run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set region eu-west-1
-
-      - name: Empty S3 Bucket
-        run:
-          aws s3 rm s3://goamegah-spark-handson-bucket --recursive
-      
-      - name: Remove lock file (if exists)
-        working-directory: ./infra
-        run: |
-          if [ -f .terraform.lock.hcl ]; then
-            rm .terraform.lock.hcl
-          fi
-
-      - name: Terraform Init for Destroy
-        working-directory: ./infra
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: terraform init
 
       - name: Terraform Destroy
         working-directory: ./infra
@@ -159,14 +157,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install boto3  # Installez les dépendances nécessaires pour clean.py
-
-      - name: Setup AWS CLI
-        run: |
-          echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
-          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
-          echo "AWS_DEFAULT_REGION=eu-west-1" >> $GITHUB_ENV
+          pip install boto3
 
       - name: Run clean_aws_resources.py script
         run: |
-          python3 clean_aws_resources.py  # Exécute le script de nettoyage
+          python3 clean_aws_resources.py

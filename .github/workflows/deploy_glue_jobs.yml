@@ -135,6 +135,10 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
+      
+      - name: Empty S3 Bucket
+        run:
+          aws s3 rm s3://goamegah-spark-handson-bucket --recursive
 
       - name: Terraform Init for Destroy
         working-directory: ./infra
@@ -142,7 +146,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: terraform init
-        
+
       - name: Terraform Destroy
         working-directory: ./infra
         env:

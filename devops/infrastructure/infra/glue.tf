@@ -3,7 +3,7 @@ resource "aws_glue_job" "exo2_glue_job" {
   role_arn = aws_iam_role.glue-role.arn
 
   command {
-    script_location = "s3://${aws_s3_bucket.bucket.bucket}/spark-jobs/glue_job.py"
+    script_location = "s3://${aws_s3_bucket.bucket.bucket}/spark-jobs/exo2_glue_job.py"
   }
 
   glue_version = "4.0"

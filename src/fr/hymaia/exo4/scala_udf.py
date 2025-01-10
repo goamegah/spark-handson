@@ -36,7 +36,8 @@ def run(inputs: Dict[str, DataFrame]) -> DataFrame:
     return df
 
 def end(output: DataFrame):
-    output.write.mode('overwrite').parquet(SUDF_OUTPUT_DIR)
+    # output.write.mode('overwrite').parquet(SUDF_OUTPUT_DIR)
+    output.groupby('category_name').count().show()
 
 def get_add_category_name_scala_udf(col):
     # on récupère le SparkContext

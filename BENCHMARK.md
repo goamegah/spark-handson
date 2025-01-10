@@ -1,6 +1,4 @@
-# UDF vs NoUDF Benchmark
-
-## Performances scalaUDF, pythonUDF, noUDF
+# Performances scalaUDF, pythonUDF, noUDF
 
 ### Pour réaliser l'expérience
 1. Installer les packages necessaires

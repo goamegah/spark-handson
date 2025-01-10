@@ -51,12 +51,12 @@ Pour observer clairement les différences entre ces différentes approches, nous
 
 ###### Huawei, Intel core i7
 ![A text](/assets/udfVSnoudf_benchmark.png)
-
 ###### Huawei, Intel core i9
 
 #### Action df.groupby().count().show()
+###### Huawei, Intel core i7
 Le fait de regrouper et compter sur la colonne que nous avons ajouté va provoquer un shuffle. l'objectif est de provoquer des envois de données de la jvm vers python nous permettant de constater une perte de performance.
-
+![A text](/assets/udf_groupby_huawei.png)
 
 
 ### Discussions

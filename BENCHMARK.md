@@ -46,10 +46,8 @@ Pour observer clairement les différences entre ces différentes approches, nous
 
 
 #### Action df.write()
-
 ###### Huawei, Intel core i7
 ![A text](/assets/udfVSnoudf_benchmark.png)
-###### Huawei, Intel core i9
 
 #### Action df.groupby().count().show()
 ###### Huawei, Intel core i7
@@ -57,14 +55,27 @@ Le fait de regrouper et compter sur la colonne que nous avons ajouté va provoqu
 ![A text](/assets/udf_groupby_huawei.png)
 
 
+#### Action df.write()
+###### HP, Intel core i5
+![A text](/assets/udfVSnoudf_hp.png)
+
+#### Action df.groupby().count().show()
+###### HP, Intel core i5
+![A text](/assets/udf_groupby_hp.png)
+
+
+#### Action df.write()
+###### Dell, Intel core i9
+![A text](/assets/udfVSnoudf_dell.png)
+
+#### Action df.groupby().count().show()
+###### Dell, Intel core i9
+![A text](/assets/udf_groupby_dell.png)
+
+
 ### Discussions
 
-Comme attendu, on peut constater que pour chaque ordinateur, l’udf python est sous-optimale, à cause des aller-retour entre la JVM et l’éxecuteur python. on peut remarquer également une différence significatif du temps d’execution entre l’udf scala et sans udf. Une hypothèse est que Catalyst ne peut pas faire d’optimisations dans l’udf scala provoquant ce décalage de performances entre les deux versions de la fonction.
-
-Un second facteur qui peut infuencer les performances est la différence matérielle de chaque ordinateur. la machine X est plus lent car XXXXXXX
-
-Enfin on peut envisager les autres processus au sein des machines consommant une partie des ressources comme la RAM, CPUs etc. 
-
+L’UDF Python est globalement sous-optimale en raison des échanges entre la JVM et Python. L’UDF Scala montre des performances inférieures à une exécution sans UDF, probablement à cause des limitations de Catalyst en termes d’optimisation. Les performances sont aussi influencées par les caractéristiques matérielles des machines (i9 > i7 > i5) et les processus en arrière-plan. Enfin, l’action write() est plus lente que groupby().show() en raison du shuffle nécessaire pour répartir la charge sur les threads.
 
 
 

@@ -40,14 +40,14 @@ def add_category_name_using_spark_fun(df):
     )
 
 def add_total_price_per_category_per_day(df):
-    window = Window.partitionBy(df.date, df.category_name)
-    price_per_partition = f.sum(df.price).over(window)
+    window_spec = Window.partitionBy(df.date, df.category_name)
+    price_per_partition = f.sum(df.price).over(window_spec)
     return df.withColumn('total_price_per_category_per_day', price_per_partition)
 
 
 def add_total_price_per_category_per_day_last30_days(df):
-    window = Window.partitionBy(df.category_name).orderBy(df.date).rowsBetween(-30, end=0)
-    price30days = f.sum(df.price).over(window)
+    window_spec = Window.partitionBy(df.category_name).orderBy(df.date).rowsBetween(-30, end=0)
+    price30days = f.sum(df.price).over(window_spec)
     return df.withColumn('total_price_per_category_per_day_last_30_days', price30days)
 
 if __name__ == '__main__':

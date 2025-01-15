@@ -25,7 +25,9 @@ def start() -> Dict[str, DataFrame]:
 
 def end(output: DataFrame):
     # output.write.mode('overwrite').parquet(UDF_OUTPUT_DIR)
-    output.groupby('category_name').count().show()
+    # output.groupby('category_name').count().show()
+    output.groupby('category_name').count().count()
+
 
 def run(inputs: Dict[str, DataFrame]) -> DataFrame:
     df = inputs[UDF_KEY]

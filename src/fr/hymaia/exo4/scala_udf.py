@@ -2,6 +2,7 @@ from src.fr.hymaia.spark_utils import spark
 from pyspark.sql.column import Column, _to_java_column, _to_seq
 from typing import Dict
 from pyspark.sql import DataFrame
+from pyspark import StorageLevel
 
 # must be defined in the same file
 # why ?
@@ -30,6 +31,7 @@ def start() -> Dict[str, DataFrame]:
         .option(key="delimiter", value=",")
         .option(key="header", value=True)
         .csv(SUDF_INPUT_PATH)
+        .persist(StorageLevel.MEMORY_ONLY)
     )
     return {SUDF_KEY: df}
 

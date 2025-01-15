@@ -2,6 +2,7 @@ from src.fr.hymaia.spark_utils import spark
 import pyspark.sql.functions as f
 from typing import Dict
 from pyspark.sql import DataFrame
+from pyspark import StorageLevel
 
 UDF2_KEY = 'udf2_key'
 UDF2_INPUT_PATH = 'src/resources/exo4/sell.csv'
@@ -21,6 +22,7 @@ def start() -> Dict[str, DataFrame]:
         .option(key="delimiter", value=",")
         .option(key="header", value=True)
         .csv(UDF2_INPUT_PATH)
+        .persist(StorageLevel.MEMORY_ONLY)
     )
     return {UDF2_KEY: df}
 

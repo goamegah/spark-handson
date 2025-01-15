@@ -3,6 +3,7 @@ import pyspark.sql.functions as f
 from pyspark.sql import DataFrame
 from typing import Dict
 from pyspark.sql.window import Window
+from pyspark import StorageLevel
 
 NOUDF_INPUT_PATH = 'src/resources/exo4/sell.csv'
 NOUDF_KEY = 'noudf_key'
@@ -21,6 +22,7 @@ def start() -> Dict[str, DataFrame]:
         .option(key="delimiter", value=",")
         .option(key="header", value=True)
         .csv(NOUDF_INPUT_PATH)
+        .persist(StorageLevel.MEMORY_ONLY)
     )
     return {NOUDF_KEY: df}
 

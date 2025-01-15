@@ -19,8 +19,8 @@ SUDF_OUTPUT_DIR = 'data/exo4/sudf/'
 
 def main():
     inputs = start()
-    output = add_category_name_using_scala_udf(inputs[SUDF_KEY])
-    # output = run(inputs)  # == add_category_name_using_scala_udf
+    # output = add_category_name_using_scala_udf(inputs[SUDF_KEY])
+    output = run(inputs)  # == add_category_name_using_scala_udf
     end(output)
 
 def start() -> Dict[str, DataFrame]:
@@ -37,7 +37,8 @@ def run(inputs: Dict[str, DataFrame]) -> DataFrame:
 
 def end(output: DataFrame):
     # output.write.mode('overwrite').parquet(SUDF_OUTPUT_DIR)
-    output.groupby('category_name').count().show()
+    # output.groupby('category_name').count().show()
+    output.groupby('category_name').count().count()
 
 def get_add_category_name_scala_udf(col):
     # on récupère le SparkContext

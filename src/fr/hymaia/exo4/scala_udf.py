@@ -24,10 +24,13 @@ def main():
     end(output)
 
 def start() -> Dict[str, DataFrame]:
-    df = spark.read \
-        .option(key="delimiter", value=",") \
-        .option(key="header", value=True) \
+    df = (
+        spark
+        .read
+        .option(key="delimiter", value=",")
+        .option(key="header", value=True)
         .csv(SUDF_INPUT_PATH)
+    )
     return {SUDF_KEY: df}
 
 def run(inputs: Dict[str, DataFrame]) -> DataFrame:

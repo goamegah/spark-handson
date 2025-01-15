@@ -17,10 +17,13 @@ def main():
     end(output)
 
 def start() -> Dict[str, DataFrame]:
-    df = spark.read \
-        .option(key="delimiter", value=",") \
-        .option(key="header", value=True) \
+    df = (
+        spark
+        .read
+        .option(key="delimiter", value=",")
+        .option(key="header", value=True)
         .csv(UDF_INPUT_PATH)
+    )
     return {UDF_KEY: df}
 
 def end(output: DataFrame):
